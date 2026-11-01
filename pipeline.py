@@ -1,0 +1,1 @@
+from src.fetch import fetch_all
