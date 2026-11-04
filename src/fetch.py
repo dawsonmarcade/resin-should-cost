@@ -16,10 +16,10 @@ import pandas as pd
 from config import SERIES, START_DATE
 
 dotenv.load_dotenv()
-
-def get_series(series_id, start = "2010-01-01"):
+BASE_URL = "https://api.stlouisfed.org/fred/"
+def get_series(series_id, start = START_DATE):
     
-    base_endpoint = "https://api.stlouisfed.org/fred/series/observations"
+    series_endpoint = BASE_URL + "series/observations"
 
     params = {
         "series_id" : series_id,
@@ -27,7 +27,7 @@ def get_series(series_id, start = "2010-01-01"):
         "file_type": "json",
         "observation_start": start
     }
-    resp = requests.get(base_endpoint, params = params)
+    resp = requests.get(series_endpoint, params = params)
     resp.raise_for_status()
     observation_list = resp.json()["observations"]
     observation_df = pd.DataFrame(observation_list)
@@ -54,8 +54,22 @@ def fetch_all():
     return concat_frames
 
 
-if __name__ == "__main__":
-    df = fetch_all()
-    print(df.head())
-    print(df.tail())
-    print(df["series_id"].value_counts())
+def get_descriptions(series_id, start = START_DATE):
+    
+    descriptions_endpoint = BASE_URL + "series"
+
+    params = {
+        "series_id" : series_id,
+        "api_key" : os.getenv("FRED_API_KEY"),
+        "file_type": "json",
+        "observation_start": start
+    }
+    
+    resp = requests.get(descriptions_endpoint, params = params)
+    resp.raise_for_status()
+    seriess_list = resp.json()['seriess']
+    
+    return seriess_list
+
+print(get_descriptions(SERIES))
+    
