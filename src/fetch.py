@@ -36,6 +36,7 @@ def _get(path, params):
     full_params = {"api_key": api_key, "file_type": "json", **params}
     resp = requests.get(BASE_URL + path, params=full_params, timeout=30)
     resp.raise_for_status()
+    
     return resp.json()
  
  
@@ -65,6 +66,7 @@ def fetch_all_observations(starts=None):
     for series_id in SERIES:
         start = starts.get(series_id, START_DATE)
         df = fetch_observations(series_id, start)
+        df = df.dropna(subset = ["value"])
         print(f"  {series_id:<16} {len(df):>6} rows from {start}")
         frames.append(df)
     return pd.concat(frames, ignore_index=True)
