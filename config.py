@@ -8,12 +8,20 @@ WPU0662: PPI for thermoplastic resins, monthly. Thermoplastics are the category 
 
 """
 
-SERIES = {
-    "DCOILWTICO": "WTI crude oil",
-    "DCOILBRENTEU": "Brent crude oil",
-    "DHHNGSP": "HH natural gas",
-    "WPU066": "PPI for plastic",
-    "WPU0662": "PPI for thermoplastic"
-    }
+BASE_URL = "https://api.stlouisfed.org/fred/"
+START_DATE = "2000-01-01"
+DB_PATH = "FRED.db"
 
-START_DATE = "2010-01-01"
+# How many days to re-pull on each run. FRED revises recent values
+# (PPI especially), so we refresh the tail instead of only adding new dates.
+REFRESH_DAYS = 90
+
+SERIES = {
+    "DCOILWTICO": "driver",       # WTI crude, $/bbl, daily
+    "DCOILBRENTEU": "driver",     # Brent crude, $/bbl, daily
+    "DHHNGSP": "driver",          # Henry Hub natural gas, $/MMBtu, daily
+    "WPU0662": "target",          # PPI thermoplastic resins, index, monthly
+    "PCU325211325211": "target",  # PPI plastics material & resin mfg, index, monthly
+}
+
+LAGS = [0, 1, 2, 3]
