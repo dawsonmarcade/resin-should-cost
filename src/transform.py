@@ -19,10 +19,10 @@ def main():
 
     for i in range(0, len(observation_data)):
         average_price_counter = 0 
-        
-        if table_meta_data[observation_data["series_id"][i]][i] == "Daily":
+        #trying to get the series id in observation table at index i to compare with the series id column of table_meta_data. If it is daily then add the prices up to the counter
+        if table_meta_data[observation_data["series_id"][i]] == "Daily":
             average_price_counter += observation_data["value"][i]
-            
+            # if the month portion of the index i in observation data "Date" column increases by one from the last index,
             if observation_data['date'][i].dt.month == observation_data['date'][i-1].dt.month + 1:
                 monthly_price_price_counter = average_price_counter / i 
                 average_price_counter = 0
