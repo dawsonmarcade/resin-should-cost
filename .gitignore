@@ -1,9 +1,6 @@
 .env
-.db
+*.db
 .venv/
-src/__pycache__/fetch.cpython-312.pyc
-.pyc
+*.pyc
+.cpython
 
-__pycache__/config.cpython-312.pyc
-src/__pycache__/fetch.cpython-312.pyc
-src/__pycache__/load.cpython-312.pyc
