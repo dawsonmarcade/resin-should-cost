@@ -12,24 +12,28 @@ from config import SERIES
 
 def main():
     con = connect()
-    observation_data = pd.read_sql_query("SELECT * FROM observations", con)
-    table_meta_data = pd.read_sql_query("SELECT * FROM series_meta", con)
-    observation_data["date"] = pd.to_datetime(observation_data["date"])
-    new_observation_df = pd.DataFrame(columns=observation_data.columns)
-
-    for i in range(0, len(observation_data)):
-        average_price_counter = 0 
-        #trying to get the series id in observation table at index i to compare with the series id column of table_meta_data. If it is daily then add the prices up to the counter
-        if table_meta_data[observation_data["series_id"][i]] == "Daily":
-            average_price_counter += observation_data["value"][i]
-            # if the month portion of the index i in observation data "Date" column increases by one from the last index,
-            if observation_data['date'][i].dt.month == observation_data['date'][i-1].dt.month + 1:
-                monthly_price_price_counter = average_price_counter / i 
-                average_price_counter = 0
-                
-            
-             
+    observation_df = pd.read_sql_query("SELECT * FROM observations", con)
+    meta_data = pd.read_sql_query("SELECT * FROM series_meta", con)
+    observation_df["date"] = pd.to_datetime(observation_df["date"])
+    new_observation_df = pd.DataFrame(columns=observation_df.columns)
     
-    print(new_observation_df.head())    
+    
+    
+    total_counter = 0
+    for i in range(0, len(observation_df)):
+        
+        series_from_observation_df = observation_df["series_id"][i]
+        frequency = meta_data[meta_data["series_id"] == series_from_observation_df]["frequency"].item()
+        
+        if frequency == "Daily":
+            if observation_df["date"][i].month == observation_df["date"][i].month - 1:
+                average_value = total_counter / i
+                new_observation_df["value"][i] = average_value
+                new_observation_df["series_id"][i] = observation_df["series_id"][i]
+                total_counter = 0
+            total_counter += observation_df["value"][i]
+
+    print(new_observation_df)
+      
 if __name__ == "__main__":
     main()
